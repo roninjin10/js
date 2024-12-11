@@ -278,6 +278,23 @@ const CUSTOM_GAS_FOR_CHAIN: Record<string, CustomChain> = {
     gasPrice: 2500n * 10n ** 9n,
     gasLimit: 200000n,
   },
+  // SKALE chains
+  "1350216234": {
+    name: "Titan",
+    gasPrice: 120n * 10n ** 9n,
+  },
+  "1482601649": {
+    name: "Nebula",
+    gasPrice: 120n * 10n ** 9n,
+  },
+  "1564830818": {
+    name: "Calypso",
+    gasPrice: 120n * 10n ** 9n,
+  },
+  "2046399126": {
+    name: "Europa",
+    gasPrice: 120n * 10n ** 9n,
+  },
 };
 
 const CUSTOM_GAS_BINS = [
