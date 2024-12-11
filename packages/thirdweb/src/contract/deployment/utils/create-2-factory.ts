@@ -172,8 +172,6 @@ export async function deployCreate2Factory(options: ClientAndChainAndAccount) {
       gasPrice,
       gasLimit,
     });
-
-    return deploymentInfo.predictedAddress;
   } else {
     const gasPriceFetched = await getGasPrice(options);
     const bin = _getNearestGasPriceBin(gasPriceFetched);
