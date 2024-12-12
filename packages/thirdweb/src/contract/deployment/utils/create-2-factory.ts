@@ -301,19 +301,19 @@ const CUSTOM_GAS_FOR_CHAIN: Record<string, CustomChain> = {
   // SKALE chains
   "1350216234": {
     name: "Titan",
-    gasPrice: 100000n,
+    gasPrice: 110000n,
   },
   "1482601649": {
     name: "Nebula",
-    gasPrice: 100000n,
+    gasPrice: 110000n,
   },
   "1564830818": {
     name: "Calypso",
-    gasPrice: 100000n,
+    gasPrice: 110000n,
   },
   "2046399126": {
     name: "Europa",
-    gasPrice: 100000n,
+    gasPrice: 110000n,
   },
 };
 
