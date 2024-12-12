@@ -38,7 +38,15 @@ export function ChatPageContent(props: {
   const [_config, setConfig] = useState<ExecuteConfig | null>();
   const [contextFilters, setContextFilters] = useState<
     ContextFilters | undefined
-  >(undefined);
+  >(() => {
+    const contextFilterRes = props.session?.context_filter;
+    if (contextFilterRes) {
+      return {
+        chainIds: contextFilterRes.chain_ids,
+        contractAddresses: contextFilterRes.contract_addresses,
+      };
+    }
+  });
 
   const config = _config || {
     mode: "client",
@@ -58,17 +66,13 @@ export function ChatPageContent(props: {
     // update page URL without reloading
     window.history.replaceState({}, "", `/chat/${sessionId}`);
 
-    const url = new URL(window.location.origin);
-
     // if the current page is landing page, link to /chat
     // if current page is new /chat page, link to landing page
     if (props.type === "landing") {
-      url.pathname = "/chat";
+      newChatPageUrlStore.setValue("/chat");
     } else {
-      url.pathname = "/";
+      newChatPageUrlStore.setValue("/");
     }
-
-    newChatPageUrlStore.setValue(url.href);
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -234,13 +238,21 @@ export function ChatPageContent(props: {
         return;
       }
       console.error(error);
-      setMessages((prev) => [
-        ...prev,
-        {
+
+      setMessages((prev) => {
+        const newMessages = prev.slice(
+          0,
+          prev[prev.length - 1]?.type === "presence" ? -1 : undefined,
+        );
+
+        // add error message
+        newMessages.push({
           text: `Error: ${error instanceof Error ? error.message : "Failed to execute command"}`,
           type: "error",
-        },
-      ]);
+        });
+
+        return newMessages;
+      });
     } finally {
       setIsChatStreaming(false);
     }
@@ -254,16 +266,12 @@ export function ChatPageContent(props: {
         // If no session exists, create a new one
         await initSession();
       } else {
-        const newSession = await updateSession({
+        await updateSession({
           authToken: props.authToken,
           config: newConfig,
           sessionId,
           contextFilters,
         });
-
-        if (newSession) {
-          setSessionId(newSession.id);
-        }
       }
     } catch (error) {
       console.error("Failed to update session", error);
@@ -292,16 +300,12 @@ export function ChatPageContent(props: {
           updateContextFilters={async (values) => {
             // if session is not yet created, don't need to update sessions - starting a chat will create a session with the context filters
             if (sessionId) {
-              const newSession = await updateSession({
+              await updateSession({
                 authToken: props.authToken,
                 config,
                 sessionId,
                 contextFilters: values,
               });
-              // setting new id - but it doesn't actually change if the session was already created ( which is the case here )
-              if (newSession) {
-                setSessionId(newSession.id);
-              }
             }
           }}
         />
